@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chat application</title>
+    <link  rel="stylesheet" href="./stylee.css">
+</head>
+<body>
+    <div id="application">
+    <h1>chat application</h1>
+    <div id="chat-container"></div>
+    <div>
+        <form action="#">
+            <input type="text" id="message" placeholder="Enter your message Here!!.."/>
+            <button onclick="handle();return false">send</button>
+        </form>
+    </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket=io();
+    const client=prompt("enter a name")
+    socket.emit("client",client)
+    const textboxmsg=document.getElementById('message');
+    const oldContainer=document.getElementById("chat-container")
+
+const display=(message,position)=>{
+    const messageDisplay=document.createElement('div')
+    messageDisplay.innerText=message;
+    messageDisplay.classList.add('msg');
+    messageDisplay.classList.add(position);
+    oldContainer.append(messageDisplay)
+    
+}
+
+function handle(){
+const text=textboxmsg.value;
+socket.emit('text',text)
+display(`you:${text}`,"left")
+
+}
+
+
+    socket.on("userjoin",(name)=>{
+         display(`${name} has join chat`,"center")
+    })
+
+    socket.on("textTransfer",(data)=>{
+         display(`${data.name} : ${data.txt}`,"right")
+    })
+    socket.on("userleft",(name)=>{
+         display(`${name} has left chat`,"center")
+    })
+</script>
+</body>
+</html>
